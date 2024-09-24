@@ -7,7 +7,8 @@ This project uses Django for the backend, HTMX for dynamic, real-time interactio
 ## Table of Contents
 1. Tech Stack
 2. Features
-3. Contact
+3. Images
+4. Contact
 
 ## Tech Stack
 1. Backend: Django (Python)
