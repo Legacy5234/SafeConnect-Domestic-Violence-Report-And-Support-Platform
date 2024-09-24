@@ -1,0 +1,74 @@
+{% load static %}
+<article class="card">
+    
+    <!-- Article Image Section -->
+    <figure>
+        <a href="{% url 'App1_Core:post-detail' post.pk %}">
+            <img class="w-full h-[30rem] object-cover rounded-t-lg" src="{{ post.cover_image.url }}" alt="{{ post.title }}">
+        </a>
+    </figure>
+
+    <!-- Article Content Section -->
+    <div class="p-4 pb-2">
+        <!-- Post Title -->
+        <h1 class="text-3xl font-bold mb-4 font1">{{ post.title | title }}</h1>
+
+        <!-- Post Author Info -->
+        {% if post.is_anonymous %}
+            <div class="flex items-center mb-4 gap-2">
+                <img class="w-8 h-8 rounded-full" src="{% static 'images/avatar_default.svg' %}" alt="Anonymous">
+                <span class="cursor-pointer font-bold">Posted Anonymously</span>
+            </div>
+        {% else %}
+            <a class="flex items-center mb-4 gap-2" href="{% url 'App2_AccountApp:userprofile' post.author.username %}">
+                <img class="w-8 h-8 rounded-full" src="{{ post.author.profile.profile_image }}" alt="{{ post.author.username }}">
+                <span class="hover:underline">@{{ post.author.username }}</span>
+            </a>
+        {% endif %}
+
+        <!-- Post Content Excerpt -->
+        <p class="mb-5 px-4">
+            {{ post.content | truncatechars:100 }} 
+            <a class="px-4 hover:underline text-green-500" href="{% url 'App1_Core:post-detail' post.pk %}">Read More</a>
+        </p>                  
+
+        <!-- Post Tags -->
+        <div class="flex items-center gap-2 text-sm mb-5">
+            {% for tag in post.tags.all %}
+                <a class="bg-gray-200 rounded-full px-3 py-1 hover:bg-gray-500 hover:text-white" href="{% url 'App1_Core:categories' tag.slug %}">
+                    {{ tag.name }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <!-- Post Actions (Comments, Likes, Edit, Delete) -->
+        <div class="flex items-center justify-between text-sm px-2">
+            {% if post.comments.count %}
+                <a class="font-bold font1 text-1xl hover:underline" href="{% url 'App1_Core:post-detail' post.pk %}">
+                    Comments
+
+                    <span id="commentscount-{{ post.id }}" class="font-light text-gray-500 ml-2">
+                        {{ post.comments.count }}
+                    </span>
+                </a>
+            {% else %}
+                <a class="font1 text-1xl hover:underline" href="{% url 'App1_Core:post-detail' post.pk %}">
+                    Add Comment
+                </a>
+            {% endif %}
+
+
+
+            <div class="flex items-center gap-4 [&>a:hover]:underline">
+                 
+                {% include 'partials/likes.html' %}
+              
+
+                {% if user.is_authenticated and user == post.author and not post.is_anonymous %}
+                    <a href="{% url 'App1_Core:editpost' post.pk %}">Edit</a>
+                    <a href="{% url 'App1_Core:deletepost' post.pk %}">Delete</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</article>

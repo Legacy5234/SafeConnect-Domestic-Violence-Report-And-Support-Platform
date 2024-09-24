@@ -1,0 +1,56 @@
+{% extends 'layouts/layout_b.html' %}
+
+{% block content %}
+
+<div class="card p-4">
+    <h1 class="font1">Create Blog Post</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="{{ form.title.id_for_label }}" class="block font-bold">{{ form.title.label }}</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <ul class="errorlist">{{ form.title.errors }}</ul>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.cover_image.id_for_label }}" class="block font-bold">{{ form.cover_image.label }}</label>
+            {{ form.cover_image }}
+            {% if form.cover_image.errors %}
+                <ul class="errorlist">{{ form.cover_image.errors }}</ul>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.content.id_for_label }}" class="block font-light">{{ form.content.label }}</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <ul class="errorlist">{{ form.content.errors }}</ul>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.tags.id_for_label }}" class="block font-bold">{{ form.tags.label }}</label>
+            {{ form.tags }}
+            {% if form.tags.errors %}
+                <ul class="errorlist">{{ form.tags.errors }}</ul>
+            {% endif %}
+        </div>
+
+        <div class="mb-4 flex items-center bg-gray-200">
+            <div class="flex items-center space-x-2">
+                {{ form.is_anonymous }}
+                <label for="{{ form.is_anonymous.id_for_label }}">{{ form.is_anonymous.label }}</label>
+            </div>
+            {% if form.is_anonymous.errors %}
+                <ul class="errorlist">{{ form.is_anonymous.errors }}</ul>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="button">Submit</button>
+        <a class="button secondaryAction ml-1" href="{{ request.META.HTTP_REFERER|default:'#' }}">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}

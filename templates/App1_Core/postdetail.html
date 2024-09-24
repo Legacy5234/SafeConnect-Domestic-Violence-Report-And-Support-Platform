@@ -1,0 +1,131 @@
+{% extends 'layouts/layout_a.html' %}
+
+{% load static %}
+
+{% block content %}
+    <!--ARTICLE DETAIL PAGE-->
+    <div class="card">
+        {% if post.cover_image %}
+            <img src="{{ post.cover_image.url }}" alt="Cover Image" class="w-full h-[30rem] object-cover rounded-t-lg">
+        {% endif %}
+        <div class="p-6">
+            <h1 class="text-4xl font-bold mb-4 font1">{{ post.title | title }}</h1>
+            <p class="text-gray-600 mb-6 font-bold">
+                Posted on {{ post.created_at|date:"F j, Y" }}
+                {% if post.is_anonymous %}
+                    Anonymously
+                {% else %}
+                    by <a href="" class="hover:underline">
+                        @{{ post.author.username }}
+                    </a>
+                {% endif %}
+            </p>
+            <div class="content mb-6">
+                {{ post.content|linebreaks }}
+            </div>
+
+            <a href="{{ request.META.HTTP_REFERER|default:'#' }}" class="button secondaryAction mb-5">Back to Blog</a>
+
+            <div class="flex items-center justify-between text-sm">
+                {% if post.is_anonymous %}
+                    <div class="flex items-center mb-4 gap-1">
+                        <img class="w-8 h-8 rounded-full" src="{% static 'images/avatar_default.svg' %}" alt="Anonymous">
+                        <span class="cursor-pointer font-bold">Posted Anonymously</span>
+                    </div>
+                {% else %}
+                    <a class="flex items-center mb-4 gap-1" href="{% url 'App2_AccountApp:userprofile' post.author.username %}">
+                        <img class="w-8 h-8 rounded-full" src="{{ post.author.profile.profile_image }}" alt="{{ post.author.username }}">
+                        <span class="hover:underline">@{{ post.author.username }}</span>
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center justify-between text-sm px-1">
+
+                <div class="flex items-center gap-4 [&>a:hover]:underline">
+                    <div class="flex items-center gap-1">
+
+                        {% include 'partials/likes.html' %}
+
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-2">
+                    {% if user.is_authenticated and user == post.author and not post.is_anonymous %}
+                        <div class="gap-1 hover:underline">
+                            <a href="{% url 'App1_Core:editpost' post.pk %}">Edit</a>
+                        </div>
+
+                        <div class="hover:underline">
+                            <a href="{% url 'App1_Core:deletepost' post.pk %}">Delete</a>
+                        </div>
+                        
+                    {% endif %}
+                </div>
+             
+            </div>
+
+        </div>
+    </div>
+
+
+    <!--COMMENT,REPLIES AND LIKES-->
+    <div>
+        <div class="card !pb-0 -mt-3">
+            <div class="font1 text-2xl px-4">
+                Make a comment 
+            </div>
+
+            <form class="flex items-center p-4 w-full" autocomplete="off"                   
+                hx-post="{% url 'App1_Core:commentsent' post.id %}" 
+                hx-target="#tab-contents"
+                hx-swap="afterbegin"
+                
+                _="on htmx:afterRequest reset() me" >
+
+                {% csrf_token %}
+                <div class="flex-grow">
+                    {{ commentform }}
+                </div>
+
+                <button @click="open = false" class="block ml-2" type="submit">Submit</button>
+            </form>
+
+        </div>
+
+        
+        <div class="card p-4">
+            <div id="tabs" class="ml-4 flex gap-1 mb-4 {% if not post.comments.count %}hidden{% endif %}" 
+
+                hx-target="#tab-contents"
+                hx-swap="innerHTML" 
+                _="on htmx:afterOnLoad take .selected for event.target">
+
+                <a hx-get="{% url 'App1_Core:post-detail' post.id %}" class="tab selected">Newest Comments</a> 
+                <a hx-get="{% url 'App1_Core:post-detail' post.id %}?top" class="tab">Top Comments</a>
+            </div>
+
+            
+            <div>               
+                <span class="font-bold font1 text-1xl cursor-pointer hover:underline ml-4">
+                    Comments
+
+                    <span id="commentscount-{{ post.id }}" class="font-light text-gray-500 ml-2">
+                        {{ post.comments.count }}
+                    </span>
+                </span>          
+            </div>
+            
+
+            <div id="tab-contents">
+                {% for comments in post.comments.all %}
+                    {% include 'includes/comments.html' %}
+                {% endfor %}
+        
+            </div>
+        </div>
+
+    </div>
+    
+    
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'layouts/layout_b.html' %}
+
+{% block content %}
+
+<h1 class="mb-2">Edit Profile</h1>
+<div class="text-center flex flex-col items-center">
+    <img id="profileimage" class="w-36 h-36 rounded-full object-cover mb-4" src="{{ user.profile.profile_image }}" alt="Profile Image"/>
+
+    <div class="text-center max-w-md">
+        <h1 id="fullname">{{ user.profile.full_name }}</h1>
+        <div class="text-gray-400 mb-2 -mt-3">@{{ user.username }}</div>
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}  
+    <button type="submit" class="button">Submit</button>
+    <a class="button secondaryAction ml-1" href="{{ request.META.HTTP_REFERER|default:'#' }}">Cancel</a>
+</form>
+<a class="mt-12 hover:underline text-gray-500" href="{% url 'App2_AccountApp:delete-account' %}">Delete Profile</a>
+
+<script>
+    // This updates the profile image
+    const fileInput = document.querySelector('input[type="file"]');
+    const image = document.querySelector('#profileimage');
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+
+        if (file && file.type.includes('image')) {
+            const url = URL.createObjectURL(file);
+            image.src = url;
+        }
+    });
+
+    // This updates the first and last names
+    const realnameInput = document.getElementById('id_first_name'); 
+    const realnameOutput = document.getElementById('fullname');
+
+    realnameInput.addEventListener('input', (event) => {
+        realnameOutput.innerText = event.target.value + ' ' + document.getElementById('id_last_name').value;
+    });
+
+    const lastnameInput = document.getElementById('id_last_name'); 
+    lastnameInput.addEventListener('input', (event) => {
+        realnameOutput.innerText = document.getElementById('id_first_name').value + ' ' + event.target.value;
+    });
+</script>
+
+{% endblock %}

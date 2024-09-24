@@ -1,0 +1,62 @@
+<comment class="card p-4 !mb-4">
+    <div class="flex justify-between items-center"> 
+        <a class="flex items-center gap-1 mb-2" href="">
+            <img class="w-8 h-8 object-cover rounded-full" src="{{ comments.author.profile.profile_image }}"> 
+            <span class="font-bold hover:underline">{{ comments.author.profile.full_name }}</span>
+            <span class="text-sm font-normal text-gray-400">@{{ comments.author.username }}</span>
+        </a>
+    </div>
+
+
+    <p class="text-xl px-2">
+        {{ comments.body }}
+    </p>
+
+    <!--REPLIES-->
+    <div x-data="{ repliesOpen: false }" class="flex items-center justify-between flex-wrap text-sm px-2">
+        <a @click="repliesOpen = !repliesOpen" class="font-bold hover:underline cursor-pointer">
+            <div class="inline-block" x-bind:class="repliesOpen && 'rotate-90 duration-300'">
+                <svg transform ="rotate(90)" width="9" height="9" viewBox="0 0 25 25">
+                    <path d="M24 22h-24l12-20z"/>
+                </svg>
+            </div>
+            {% if comments.replies.count %}
+                <span class="font1 text-1xl hover:underline">Replies</span>
+                <span id="repliescount-{{ comment.id }}" class="font-light text-gray-500 ml-1">
+                    {{ comments.replies.count }}
+                </span>
+            {% else %}
+                <span class="font1 text-1xl hover:underline">Add Replies</span>
+            {% endif %}
+        </a>
+        
+        <div class="flex items-center gap-4 [&>a:hover]:underline">
+            
+            {% include 'partials/likes_comment.html' %}
+
+            {% if user.is_authenticated and user == comments.author %}
+                <a href="{% url 'App1_Core:delete-comment' comments.pk %}">Delete</a>
+            {% endif %}
+        </div>
+
+        <div x-show="repliesOpen" x-cloak class="basis-full mt-3 pl-8 grid grid-cols-1">
+
+            {% for reply in comments.replies.all %}
+                {% include 'includes/reply.html' %}
+            {% endfor %}
+
+            <form class="flex items-center p-4 w-full" autocomplete="off" 
+                hx-post="{% url 'App1_Core:reply-sent' comments.pk %}"
+                hx-target="this"
+                hx-swap="outerHTML" >
+
+                {% csrf_token %}
+                <div class="flex-grow">
+                    {{ replyform }}
+                </div>
+
+                <button @click="open = false" class="block ml-2" type="submit">Submit</button>
+            </form>
+        </div>
+    </div> 
+</comment>
