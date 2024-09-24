@@ -38,6 +38,22 @@ SafeConnect provides the following core features:
 6. Interactive UI with HTMX:
    Dynamic page updates without the need for full-page refreshes using HTMX.
 
+## IMAGES
+
+HomePage                                    |                Homepage
+:-----------------------------------------: | :-----------------------------------------:
+![](img1.jpeg)                              |        ![](img2.jpeg)
+
+Article Detail Page                         |                Comment and Replies
+:-----------------------------------------: | :-----------------------------------------:
+![](img3.jpeg)                              |        ![](img4.jpeg)
+
+Comment and Replies                         |                ProfilePage
+:-----------------------------------------: | :-----------------------------------------:
+![](img5.jpeg)                              |        ![](img6.jpeg)
+
+
+## CONTACT
 I'd love to hear from you! Whether you have a question or want to discuss a project, feel free to reach out.
 Email: tariofiyoushell@gmail.com <br>
 Phone: 1237026108529 <br>
